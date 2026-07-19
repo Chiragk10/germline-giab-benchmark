@@ -25,6 +25,23 @@ Panel/off-target metrics (PRNP gene as a mock panel — see caveat in
 [`ROADMAP.md`](ROADMAP.md#phase-d-result-completed-2026-07-18)):
 [`results/panel_metrics/HG002_chr20_PRNP_panel_summary.csv`](results/panel_metrics/HG002_chr20_PRNP_panel_summary.csv).
 
+**F1 by indel-size stratum** (from [`results/sql/happy_extended_stratified.csv`](results/sql/happy_extended_stratified.csv)) —
+accuracy degrades with indel length, the classic variant-calling failure mode:
+
+| Indel size class | F1 |
+|---|---|
+| 1-5bp deletions | 99.37% |
+| 1-5bp insertions | 99.12% |
+| 6-15bp deletions | 98.66% |
+| 6-15bp insertions | 98.52% |
+| 16bp+ deletions | 98.47% |
+| 16bp+ insertions | 95.49% |
+
+Queryable two ways — both run the same SQL over the same result CSVs, byte-identical
+output: **AWS Athena** (`scripts/athena_query.sh`, real SQL over S3-backed Glue tables,
+see [`ROADMAP.md`](ROADMAP.md#extension-stratified--roc-data-and-a-no-aws-account-duckdb-path-2026-07-19))
+or **DuckDB, locally, no AWS account needed** (`duckdb < scripts/duckdb_queries.sql`).
+
 ## What's here
 
 - **[`WALKTHROUGH.md`](WALKTHROUGH.md)** — narrative, step-by-step account of how this
@@ -35,7 +52,9 @@ Panel/off-target metrics (PRNP gene as a mock panel — see caveat in
 - **`*.nf`** — the Nextflow entry points (`benchmark_happy.nf` for the hap.py harness;
   sarek itself is invoked directly via `nextflow run nf-core/sarek`, not vendored here).
 - **`scripts/`** — reproduction scripts (FASTQ extraction, rtg-tools/JVM setup, Athena
-  query helper).
+  query helper, DuckDB queries).
+- **`results/sql/`** — curated CSVs (indel-size-stratified F1, ROC-by-QUAL-threshold)
+  queryable via either Athena or DuckDB — see below.
 - **`nextflow.config.example`** — copy to `nextflow.config` and fill in your own Seqera
   token to reproduce the AWS Batch runs.
 

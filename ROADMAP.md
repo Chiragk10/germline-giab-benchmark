@@ -356,6 +356,56 @@ exploration) - Glue Data Catalog storage for two tiny tables is within the AWS G
 tier. No standing cost: Athena and Glue Data Catalog are both fully serverless, nothing to
 tear down or scale to zero.
 
+### Extension: stratified + ROC data, and a no-AWS-account DuckDB path (2026-07-19)
+The first pass only queried summary-level tables (one row per variant type). Extended it
+with two more tables that actually have something to stratify by:
+
+- **`happy_extended`** - built from hap.py's `extended.csv`, filtered to `Subset='*'`
+  (drops a `TS_contained` duplicate row that's identical at this truth-set scale) and
+  projected to 10 columns. The real content here is the `Subtype` field, which hap.py
+  uses to break INDELs down by **size/complexity class** (`D1_5`/`I1_5` = 1-5bp
+  deletions/insertions, up to `D16_PLUS`/`I16_PLUS` = 16bp+, plus complex-indel classes
+  `C1_5`/`C6_15`/`C16_PLUS` which are empty for this truth region - a real "doesn't occur
+  here" result, not a bug). This is a genuine stratum, not a cosmetic one.
+- **`roc_curve`** - built from `roc.Locations.{SNP,INDEL}.PASS.csv.gz`, filtered to
+  `Subtype='*'`/`Subset='*'` and concatenated. One row per distinct QUAL score hap.py's
+  vcfeval-derived ROC curve observed (7,043 rows total) - lets a query ask "at what QUAL
+  threshold does precision/recall cross X", not just read off the single fixed-threshold
+  PASS/ALL numbers already in `happy_summary`.
+
+**Query 1 (F1 by indel-size stratum, PASS-filtered):**
+```sql
+SELECT indel_size_stratum, truth_total, metric_recall, metric_precision, metric_f1_score
+FROM germline_benchmark.happy_extended
+WHERE variant_type = 'INDEL' AND filter = 'PASS' AND truth_total > 0 AND indel_size_stratum <> '*'
+ORDER BY truth_total DESC
+```
+Result: F1 degrades monotonically with indel size - 0.994 (1-5bp deletions) down to 0.955
+(16bp+ insertions). This is the textbook variant-calling failure mode (longer indels are
+harder to align/assemble around), and the query surfaces it directly from real per-stratum
+counts, not a canned number.
+
+**Query 2 (QUAL threshold where SNP recall first drops below 99%):** finds QUAL≈126.6 as
+the crossing point, precision ~99.56% there - a real precision/recall trade-off read off
+the ROC curve, not the single fixed operating point in `happy_summary`.
+
+**Deliberately did NOT do physical Athena/Glue partitioning** ("partition by region-type"
+was the original idea). Partitioning exists to let a query engine skip scanning irrelevant
+S3 prefixes on datasets where that scan cost matters - at a few hundred KB total, there is
+nothing to skip and no cost/latency it would save. Stratification here is done the honest
+way: a `WHERE`/`GROUP BY` on a real column (`indel_size_stratum`), not a physical
+partition layout that would only be doing something at 1000x+ this data volume.
+
+**DuckDB local path (`scripts/duckdb_queries.sql`):** same two queries, run with
+`duckdb < scripts/duckdb_queries.sql` directly against the committed
+`results/sql/*.csv` files - no AWS account, no credentials, no server. Verified
+byte-identical results to the Athena versions before committing. Closes a real
+reproducibility gap: previously "reproduce the SQL layer" meant "have my AWS account,"
+which nobody reviewing this repo has.
+
+**AWS/cost:** two new tables, ~440KB total S3 storage (Glue free tier). Both queries
+scanned under Athena's 10MB minimum, so ~$0.0001 total. No standing cost.
+
 ## Pitfalls to watch (from review 2026-07-16)
 1. **`chr20` vs `20` naming trap** — #1 cause of silent zero-overlap failures. Reads, ref
    FASTA, Truth VCF, Truth BED must ALL use `chr`-prefixed GRCh38. Extracting from the

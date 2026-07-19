@@ -436,6 +436,29 @@ aggregation. Query helper saved at `scripts/athena_query.sh`. (DynamoDB was cons
 and explicitly ruled out for this — it's NoSQL/key-value, not a real SQL skillset, and
 this project doesn't need a queryable service, just the tables it already produces.)
 
+The first pass only had summary-level tables — one row per variant type, nothing to
+stratify by. Extended it with two tables that do have real structure: `happy_extended`
+(hap.py's own indel-size/complexity breakdown — `D1_5`/`I1_5` for 1-5bp indels up through
+`D16_PLUS`/`I16_PLUS` for 16bp+) and `roc_curve` (one row per QUAL score hap.py's ROC curve
+observed, 7,043 rows, so a query can ask "at what QUAL threshold does recall cross 99%"
+instead of only reading the one fixed PASS/ALL operating point). The "F1 by indel size"
+query surfaces something real: accuracy drops monotonically as indels get longer — 99.37%
+F1 for short deletions down to 95.49% for 16bp+ insertions — the textbook variant-calling
+failure mode, read directly off real per-stratum counts.
+
+One thing deliberately *not* done: physical Athena/Glue partitioning. Partitioning exists
+to let a query skip scanning irrelevant S3 data at real scale; at a few hundred KB total
+there's nothing to skip. Stratifying via `WHERE`/`GROUP BY` on a real column is the honest
+version of this at our data size — partitioning would just be performing the pattern
+without it doing anything.
+
+The bigger gap the extension closed: "reproduce the SQL layer" previously meant "have my
+AWS account," which nobody reviewing this repo has. Added a **DuckDB** path
+(`scripts/duckdb_queries.sql`) that runs the identical SQL directly against the committed
+`results/sql/*.csv` files — `duckdb < scripts/duckdb_queries.sql`, no AWS credentials, no
+server, single static binary. Verified byte-identical output against the Athena version
+before committing either.
+
 ---
 
 ## 7. Disk hygiene: a real mistake, corrected
@@ -459,8 +482,9 @@ output is safely stored elsewhere (S3 or `results/`) rather than "just in case."
   VCF (Phase B)
 - `results/germline-benchmark/annotation/haplotypecaller/HG002_chr20/` — VEP + snpEff
   annotated VCFs (Phase E)
-- `results/germline-benchmark/benchmark_tables/` — the CSVs Athena queries (Phase C/D,
-  uploaded for the SQL detour)
+- `results/germline-benchmark/benchmark_tables/` — the CSVs Athena queries: `happy_summary`,
+  `panel_metrics` (Phase C/D), plus `happy_extended` and `roc_curve` (the stratified/ROC
+  extension)
 - `work/germline-benchmark/` — Nextflow's intermediate work directory (14-day
   auto-expiry lifecycle rule, already in place)
 
@@ -469,6 +493,8 @@ output is safely stored elsewhere (S3 or `results/`) rather than "just in case."
 - `data/truth/` — the chr20-subset GIAB truth VCF/BED
 - `data/panel_prnp.bed`, `data/chr20.bed` — the interval definitions
 - `results/happy/`, `results/panel_metrics/` — the local benchmark output tables
+- `results/sql/` — curated CSVs for the stratified/ROC queries, queryable via Athena or
+  DuckDB (`scripts/duckdb_queries.sql`) with no AWS account
 - `tools/` — the extracted rtg-tools + JVM (gitignored, regenerate any time via
   `scripts/extract_rtg_tools.sh`)
 
