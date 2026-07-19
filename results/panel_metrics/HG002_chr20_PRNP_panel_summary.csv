@@ -1,0 +1,16 @@
+metric,value,note
+panel_gene,PRNP,chr20:4684730-4702590 (GRCh38, 1000bp flank each side, coordinates via Ensembl REST API)
+panel_size_bp,17860,
+total_reads_chr20,18577986,
+on_target_reads,5203,samtools view -c -L panel_prnp.bed
+on_target_pct,0.0280,
+off_target_reads,18572783,
+off_target_pct,99.9720,
+panel_geometric_fraction_pct,0.0277,panel_bp / chr20_bp - the expected on-target rate under pure chance with zero enrichment
+panel_mean_coverage,36.43,mosdepth --by panel_prnp.bed
+chr20_mean_coverage,36.28,mosdepth whole-chr20
+coverage_ratio,1.004,panel vs chr20-wide - near 1.0 confirms uniform coverage
+panel_pct_at_1x,100.0,17860/17860 bases (mosdepth thresholds)
+panel_pct_at_10x,99.99,17859/17860 bases
+panel_pct_at_20x,99.75,17815/17860 bases
+panel_pct_at_30x,86.91,15523/17860 bases

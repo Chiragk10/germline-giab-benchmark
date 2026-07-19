@@ -1,0 +1,29 @@
+process.executor = 'awsbatch'
+process.queue = 'ChiragQueue'
+aws.region = 'us-east-1'
+workDir = 's3://chirag-pgx-variant-pipeline-619759453039/work/germline-benchmark'
+docker.enabled = true
+
+// cap so a chr20 scatter can't spike the bill (ROADMAP.md pitfall #4)
+executor.queueSize = 20
+
+// ChiragCompute's EC2 CE resolves 'default_x86_64' to the classic AWS Batch "optimal"
+// family, which tops out around 16 vCPU per instance - sarek's process_high label (12
+// CPU/72GB) can get scaled to requests no instance in that family can satisfy
+// (MISCONFIGURATION). Cap pipeline-wide rather than touch the shared CE.
+process.resourceLimits = [ cpus: 15, memory: 58.GB, time: 24.h ]
+
+wave.enabled = true
+fusion.enabled = true
+tower.accessToken = 'YOUR_SEQERA_TOKEN_HERE'
+
+// For steps that don't need cloud scale (e.g. benchmark_happy.nf): run with
+// `-profile local` to bypass AWS Batch, Wave and Fusion entirely.
+profiles {
+    local {
+        process.executor = 'local'
+        workDir = 'work_local'
+        wave.enabled = false
+        fusion.enabled = false
+    }
+}

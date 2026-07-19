@@ -1,0 +1,2 @@
+patient,sample,variantcaller,vcf
+HG002,HG002_chr20,haplotypecaller,s3://chirag-pgx-variant-pipeline-619759453039/results/germline-benchmark/variant_calling/haplotypecaller/HG002_chr20/HG002_chr20.haplotypecaller.filtered.vcf.gz

@@ -1,0 +1,2 @@
+patient,sample,lane,fastq_1,fastq_2
+HG002,HG002_chr20,L001,/root/bioinformatics-engineer/Clinicalgradegermlinepipeline+GIABbenchmark/data/reads/HG002_chr20_R1.fq.gz,/root/bioinformatics-engineer/Clinicalgradegermlinepipeline+GIABbenchmark/data/reads/HG002_chr20_R2.fq.gz

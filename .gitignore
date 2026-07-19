@@ -1,0 +1,25 @@
+nextflow.config
+.nextflow/
+.nextflow.log*
+work/
+data/reads/*.bam
+data/reads/*.bam.bai
+data/reads/*.fq.gz
+data/reads/*.fastq.gz
+data/truth/*.vcf.gz
+data/truth/*.vcf.gz.tbi
+data/truth/*.bed
+data/ref/
+work_local/
+tools/
+nf-*-reports.tsv
+
+# results/ - keep the small benchmark tables (the actual proof), exclude large
+# regenerable binaries (raw VCFs, per-base coverage, ROC curve data)
+results/haplotypecaller/
+results/happy/*.vcf.gz
+results/happy/*.vcf.gz.tbi
+results/happy/*.metrics.json.gz
+results/happy/*.roc.*.csv.gz
+results/panel_metrics/*.bed.gz
+results/panel_metrics/*.bed.gz.csi

@@ -1,0 +1,106 @@
+[33mNextflow 26.04.6 is available - Please consider updating your version to it(B[m
+
+-[2m----------------------------------------------------[0m-
+                                        [0;32m,--.[0;30m/[0;32m,-.[0m
+[0;34m        ___     __   __   __   ___     [0;32m/,-._.--~'[0m
+[0;34m  |\ | |__  __ /  ` /  \ |__) |__         [0;33m}  {[0m
+[0;34m  | \| |       \__, \__/ |  \ |___     [0;32m\`-._,-`-,[0m
+                                        [0;32m`._,._,'[0m
+[0;37m      ____[0m
+[0;37m    .´ _  `.[0m
+[0;37m   /  [0;32m|\[0m`-_ \[0m     [0;34m __        __   ___     [0m
+[0;37m  |   [0;32m| \[0m  `-|[0m    [0;34m|__`  /\  |__) |__  |__/[0m
+[0;37m   \ [0;32m|   \[0m  /[0m     [0;34m.__| /¯¯\ |  \ |___ |  \[0m
+[0;37m    `[0;32m|[0m____[0;32m\[0m´[0m
+
+[0;35m  nf-core/sarek 3.9.0[0m
+-[2m----------------------------------------------------[0m-
+Input/output options
+  input                  : samplesheet_annotate.csv
+  step                   : annotate
+  outdir                 : s3://chirag-pgx-variant-pipeline-619759453039/results/germline-benchmark
+
+Main options
+  intervals              : s3://ngi-igenomes/igenomes//Homo_sapiens/GATK/GRCh38/Annotation/intervals/wgs_calling_regions_noseconds.hg38.bed
+  wes                    : true
+  tools                  : vep,snpeff
+
+Variant Calling
+  cf_chrom_len           : s3://ngi-igenomes/igenomes//Homo_sapiens/GATK/GRCh38/Sequence/Length/Homo_sapiens_assembly38.len
+  pon                    : s3://ngi-igenomes/igenomes//Homo_sapiens/GATK/GRCh38/Annotation/GATKBundle/1000g_pon.hg38.vcf.gz
+  pon_tbi                : s3://ngi-igenomes/igenomes//Homo_sapiens/GATK/GRCh38/Annotation/GATKBundle/1000g_pon.hg38.vcf.gz.tbi
+
+Reference genome options
+  ascat_genome           : hg38
+  ascat_alleles          : s3://ngi-igenomes/igenomes//Homo_sapiens/GATK/GRCh38/Annotation/ASCAT/G1000_alleles_hg38.zip
+  ascat_loci             : s3://ngi-igenomes/igenomes//Homo_sapiens/GATK/GRCh38/Annotation/ASCAT/G1000_loci_hg38.zip
+  ascat_loci_gc          : s3://ngi-igenomes/igenomes//Homo_sapiens/GATK/GRCh38/Annotation/ASCAT/GC_G1000_hg38.zip
+  ascat_loci_rt          : s3://ngi-igenomes/igenomes//Homo_sapiens/GATK/GRCh38/Annotation/ASCAT/RT_G1000_hg38.zip
+  bwa                    : s3://ngi-igenomes/igenomes//Homo_sapiens/GATK/GRCh38/Sequence/BWAIndex/
+  bwamem2                : s3://ngi-igenomes/igenomes//Homo_sapiens/GATK/GRCh38/Sequence/BWAmem2Index/
+  chr_dir                : s3://ngi-igenomes/igenomes//Homo_sapiens/GATK/GRCh38/Sequence/Chromosomes
+  dbsnp                  : s3://ngi-igenomes/igenomes//Homo_sapiens/GATK/GRCh38/Annotation/GATKBundle/dbsnp_146.hg38.vcf.gz
+  dbsnp_tbi              : s3://ngi-igenomes/igenomes//Homo_sapiens/GATK/GRCh38/Annotation/GATKBundle/dbsnp_146.hg38.vcf.gz.tbi
+  dbsnp_vqsr             : --resource:dbsnp,known=false,training=true,truth=false,prior=2.0 dbsnp_146.hg38.vcf.gz
+  dict                   : s3://ngi-igenomes/igenomes//Homo_sapiens/GATK/GRCh38/Sequence/WholeGenomeFasta/Homo_sapiens_assembly38.dict
+  dragmap                : s3://ngi-igenomes/igenomes//Homo_sapiens/GATK/GRCh38/Sequence/dragmap/
+  fasta                  : s3://ngi-igenomes/igenomes//Homo_sapiens/GATK/GRCh38/Sequence/WholeGenomeFasta/Homo_sapiens_assembly38.fasta
+  fasta_fai              : s3://ngi-igenomes/igenomes//Homo_sapiens/GATK/GRCh38/Sequence/WholeGenomeFasta/Homo_sapiens_assembly38.fasta.fai
+  germline_resource      : s3://ngi-igenomes/igenomes//Homo_sapiens/GATK/GRCh38/Annotation/GATKBundle/af-only-gnomad.hg38.vcf.gz
+  germline_resource_tbi  : s3://ngi-igenomes/igenomes//Homo_sapiens/GATK/GRCh38/Annotation/GATKBundle/af-only-gnomad.hg38.vcf.gz.tbi
+  known_indels           : s3://ngi-igenomes/igenomes//Homo_sapiens/GATK/GRCh38/Annotation/GATKBundle/{Mills_and_1000G_gold_standard.indels.hg38,beta/Homo_sapiens_assembly38.known_indels}.vcf.gz
+  known_indels_tbi       : s3://ngi-igenomes/igenomes//Homo_sapiens/GATK/GRCh38/Annotation/GATKBundle/{Mills_and_1000G_gold_standard.indels.hg38,beta/Homo_sapiens_assembly38.known_indels}.vcf.gz.tbi
+  known_indels_vqsr      : --resource:gatk,known=false,training=true,truth=true,prior=10.0 Homo_sapiens_assembly38.known_indels.vcf.gz --resource:mills,known=false,training=true,truth=true,prior=10.0 Mills_and_1000G_gold_standard.indels.hg38.vcf.gz
+  known_snps             : s3://ngi-igenomes/igenomes//Homo_sapiens/GATK/GRCh38/Annotation/GATKBundle/1000G_omni2.5.hg38.vcf.gz
+  known_snps_tbi         : s3://ngi-igenomes/igenomes//Homo_sapiens/GATK/GRCh38/Annotation/GATKBundle/1000G_omni2.5.hg38.vcf.gz.tbi
+  known_snps_vqsr        : --resource:1000G,known=false,training=true,truth=true,prior=10.0 1000G_omni2.5.hg38.vcf.gz
+  mappability            : s3://ngi-igenomes/igenomes//Homo_sapiens/GATK/GRCh38/Annotation/Control-FREEC/out100m2_hg38.gem
+  msisensor2_models      : s3://ngi-igenomes/igenomes//Homo_sapiens/GATK/GRCh38/Annotation/MSIsensor2/models_hg38//
+  msisensorpro_scan      : s3://ngi-igenomes/igenomes//Homo_sapiens/GATK/GRCh38/Annotation/MSIsensorPro/Homo_sapiens_assembly38.msisensor_scan.list
+  ngscheckmate_bed       : s3://ngi-igenomes/igenomes//Homo_sapiens/GATK/GRCh38/Annotation/NGSCheckMate/SNP_GRCh38_hg38_wChr.bed
+  sentieon_dnascope_model: s3://ngi-igenomes/igenomes//Homo_sapiens/GATK/GRCh38/Annotation/Sentieon/SentieonDNAscopeModel1.1.model
+  snpeff_db              : GRCh38.99
+  vep_cache_version      : 115
+  vep_genome             : GRCh38
+  vep_species            : homo_sapiens
+
+Generic options
+  trace_report_suffix    : 2026-07-18_07-50-29
+
+Core Nextflow options
+  revision               : master
+  runName                : amazing_gutenberg
+  containerEngine        : docker
+  launchDir              : /root/bioinformatics-engineer/Clinicalgradegermlinepipeline+GIABbenchmark
+  workDir                : /chirag-pgx-variant-pipeline-619759453039/work/germline-benchmark
+  projectDir             : /root/.nextflow/assets/.repos/nf-core/sarek/clones/b97952e5bac68d5deb93d4a3349a45f146be9830
+  userName               : root
+  profile                : docker
+  configFiles            : /root/.nextflow/assets/.repos/nf-core/sarek/clones/b97952e5bac68d5deb93d4a3349a45f146be9830/nextflow.config, /root/bioinformatics-engineer/Clinicalgradegermlinepipeline+GIABbenchmark/nextflow.config, /root/bioinformatics-engineer/Clinicalgradegermlinepipeline+GIABbenchmark/nextflow.config
+
+!! Only displaying parameters that differ from the pipeline defaults !!
+------------------------------------------------------
+* The pipeline
+    https://doi.org/10.12688/f1000research.16665.2
+    https://doi.org/10.1093/nargab/lqae031
+    https://doi.org/10.5281/zenodo.3476425
+
+* The nf-core framework
+    https://doi.org/10.1038/s41587-020-0439-x
+
+* Software dependencies
+    https://github.com/nf-core/sarek/blob/master/CITATIONS.md
+[PIPELINE] nf-core/sarek 3.9.0 | profile=docker
+[WORKDIR] s3://chirag-pgx-variant-pipeline-619759453039/work/germline-benchmark
+[PROCESS 48/461323] NFCORE_SAREK:SAREK:VCF_ANNOTATE_ALL:VCF_ANNOTATE_SNPEFF:SNPEFF_SNPEFF (HG002_chr20)
+[PROCESS fd/0f4261] NFCORE_SAREK:SAREK:VCF_ANNOTATE_ALL:ENSEMBLVEP_VEP (HG002_chr20)
+[PROCESS 46/687e15] NFCORE_SAREK:SAREK:VCF_ANNOTATE_ALL:VCF_ANNOTATE_SNPEFF:TABIX_BGZIPTABIX (HG002_chr20)
+[PROCESS fe/39d95d] NFCORE_SAREK:SAREK:MULTIQC (sarek)
+Waiting for file transfers to complete (2 files)-[0;35m[nf-core/sarek][0;32m Pipeline completed successfully[0m-
+Outputs:
+
+  s3://chirag-pgx-variant-pipeline-619759453039/results/germline-benchmark
+
+  multiqc: multiqc/index.json
+
+[SUCCESS] completed=4 failed=0 cached=0
